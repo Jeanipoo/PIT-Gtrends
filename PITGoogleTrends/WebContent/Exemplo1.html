@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>SHOW EIN!!</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#btn_Ok").click(function(){
+        var vnome =  $('#nome').val();
+        var vaniversario = $('#aniversario').val();                          
+        alert(nome + ", seu aniversário é em " + aniversario +"!");
+        $.get('PessoaController',{nome:vnome,niver:vaniversario},function(responseJson) {
+        });
+        var resposta = responseJson;
+        alert("Data: " + resposta);
+    });
+});
+</script>
+</head>
+<body>
+<label for="nome" >Nome:</label>
+<input type="text" id="nome" placeholder="Nome">
+<label for="nome" >Aniversário:</label>
+<input type="text" id="aniversario" placeholder="Aniversário">
+<button id="btn_Ok">Ok</button>
+</body>
+</html>
