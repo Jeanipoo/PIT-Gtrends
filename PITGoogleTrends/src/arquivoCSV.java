@@ -14,12 +14,12 @@ public class arquivoCSV {
 		valores Relacionadas = new valores();
 		public ArrayList<valores> ListaAscensão = new ArrayList<valores>();
 		valores Ascensão = new valores();
+		public String Pesquisa;
 		
 		public void ler(){
 			String[] Palavras = {"SHOW"};
 			String[] Hora = {"EIN"};
 			int ConverteHora = 0;
-			
 			int cont11 = 1;
 			int cont13 = 1;
 			
@@ -110,6 +110,7 @@ public class arquivoCSV {
 					// 2) 1 linha
 					Palavras = linha.split(",");
 					System.out.println("Linha 2.1: " + Palavras[0] + " | " + Palavras[1]);
+					Pesquisa = Palavras[1];
 					linha = leitor.readLine();
 					
 					System.out.println("---------------------------");
@@ -122,10 +123,10 @@ public class arquivoCSV {
 							Palavras[0] = Palavras[0].substring(11, 16);
 							Hora = Palavras[0].split(":");
 							ConverteHora = Integer.parseInt(Hora[0]);
-							if (ConverteHora>2){
-								ConverteHora = ConverteHora-3;
+							if (ConverteHora>0){
+								ConverteHora = ConverteHora-1;
 							} else {
-								ConverteHora = ConverteHora+21;
+								ConverteHora = 23;
 							}
 							Hora[0] = String.format("%02d", ConverteHora);
 							Palavras[0] = Hora[0]+":"+Hora[1];

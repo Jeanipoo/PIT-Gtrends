@@ -11,9 +11,14 @@ $(document).ready(function(){
         var vaniversario = $('#aniversario').val();                          
         alert(nome + ", seu aniversário é em " + aniversario +"!");
         $.get('PessoaController',{nome:vnome,niver:vaniversario},function(responseJson) {
+        	var resposta1;
+        	var resposta2;
+        	for ( var j=0; j<responseJson.ListaPorMinuto.length-1; j++){
+                resposta1 = responseJson.ListaPorMinuto[j].atributo;
+                resposta2 = responseJson.ListaPorMinuto[j].valor;
+                alert("Data: " + resposta1 + " | " + resposta2);
+                }
         });
-        var resposta = responseJson;
-        alert("Data: " + resposta);
     });
 });
 </script>
