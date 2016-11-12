@@ -1,102 +1,81 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Random;
+import java.util.Scanner;
 
 public class arquivoCSV {
 		public ArrayList<valores> ListaPorMinuto = new ArrayList<valores>();
 		valores PorMinuto = new valores();
-		public ArrayList<valores> ListaRegi„o = new ArrayList<valores>();
+		public ArrayList<valores> ListaRegiao = new ArrayList<valores>();
 		valores Regi„o = new valores();
 		public ArrayList<valores> ListaCidade = new ArrayList<valores>();
 		valores Cidade = new valores();
 		public ArrayList<valores> ListaRelacionadas = new ArrayList<valores>();
 		valores Relacionadas = new valores();
-		public ArrayList<valores> ListaAscens„o = new ArrayList<valores>();
+		public ArrayList<valores> ListaAscensao = new ArrayList<valores>();
 		valores Ascens„o = new valores();
-		public String Pesquisa;
+		public String termo = "termo";
+
+		private static final CopyOption REPLACE_EXISTING = null;
+		
+		public void download(String termo_procurado){
+			String URL1 = "start chrome https://www.google.com/trends/trendsReport?date=now%201-H^&q=";
+			String URL2 = "^&export=1";
+			String URL = URL1 + termo_procurado + URL2;
+			System.out.println("Realizando Download");
+			try {
+				Runtime.getRuntime().exec(new String[]{"cmd", "/c", URL});
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			Path from = Paths.get("C:\\Users\\Jean\\Downloads\\report.csv");
+			Path to = Paths.get("C:\\Users\\Jean\\Desktop\\PIT_GoogleTrends\\Download.csv");
+			try {
+				Files.move(from, to, StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		public void ler(){
-			String[] Palavras = {"SHOW"};
-			String[] Hora = {"EIN"};
+			ListaCidade.add(Cidade);
+			ListaAscensao.add(Ascens„o);
+			ListaRelacionadas.add(Relacionadas);
+			String[] Palavras = {""};
+			String[] Hora = {""};
 			int ConverteHora = 0;
 			int cont11 = 1;
 			int cont13 = 1;
 			
-			/*
-			 * Ordem de leitura CSV: 4(+1) - 3(+1) - 3(+1) - 4 - 4 - ..3
-			 * =================
-			 * 1) 4 linhas inteiras:
-			 * 		Pesquisa na web do Google interesse: <PALAVRA>
-			 * 		Todo o mundo na ˙ltima hora
-			 * 
-			 * 		Interesse ao longo do tempo
-			 * -----------------
-			 * 2) Primeira linha com split:
-			 * 		Tempo
-			 * 			<PALAVRA>
-			 * -----------------
-			 * 3) X linhas com split:
-			 * 		2016-10-09-23:03 UTC
-			 * 			88
-			 * =================
-			 * 4) 3 linhas inteiras:
-			 * 
-			 * 
-			 * 		Principais regiıes para <PALAVRA>
-			 * -----------------
-			 * 5) Primeira linha com split:
-			 * 		Regi„o
-			 * 			<PALAVRA>
-			 * -----------------
-			 * 6) X linhas com split:
-			 * 		Estados Unidos
-			 * 			100
-			 * =================
-			 * 7) 3 linhas inteiras:
-			 * 
-			 * 
-			 * 		Principais cidades para <PALAVRA>
-			 * -----------------
-			 * 8) Primeira linha com split:
-			 * 		Cidade
-			 * 			<PALAVRA>
-			 * -----------------
-			 * 9) X linhas com split:
-			 * 		Fall River (Estados Unidos)
-			 * 			100
-			 * =================
-			 * 10) 4 linhas inteiras:
-			 * 
-			 * 
-			 * 
-			 * 		Principais pesquisas para <PALAVRA>
-			 * -----------------
-			 * 11) X linhas com split:
-			 * 		cheesecake factory
-			 * 			100
-			 * =================
-			 * 12) 4 linhas inteiras:
-			 * 
-			 * 
-			 * 
-			 * 		Pesquisas em ascens„o para <PALAVRA>
-			 * -----------------
-			 * 13) X linhas com split:
-			 * 		cheesecake factory coupons
-			 * 			+130%
-			 * =================
-			 * 14) 3 linhas inteiras vazias
-			 */
-			
 			try
 			{
-				FileReader arquivo = new FileReader("C:\\Users\\Jean\\Desktop\\PIT_GoogleTrends\\GoogleTrends0001.csv");
+				FileReader arquivo = new FileReader("C:\\Users\\Jean\\Desktop\\PIT_GoogleTrends\\Download.csv");
 				BufferedReader leitor = new BufferedReader(arquivo);
 				String linha = leitor.readLine();
 				while(linha != null)
 				{			
-					// 1) 4 linhas
 					System.out.println("Linha 1.1: " + linha);
 					linha = leitor.readLine();
 					System.out.println("Linha 1.2: " + linha);
@@ -107,14 +86,12 @@ public class arquivoCSV {
 					linha = leitor.readLine();
 					
 					System.out.println("---------------------------");
-					// 2) 1 linha
 					Palavras = linha.split(",");
 					System.out.println("Linha 2.1: " + Palavras[0] + " | " + Palavras[1]);
-					Pesquisa = Palavras[1];
+					termo = Palavras[1];
 					linha = leitor.readLine();
 					
 					System.out.println("---------------------------");
-					// 3) X linhas
 					int cont3 = 1;
 					while (Palavras.length > 1){
 						Palavras = linha.split(",");
@@ -123,10 +100,10 @@ public class arquivoCSV {
 							Palavras[0] = Palavras[0].substring(11, 16);
 							Hora = Palavras[0].split(":");
 							ConverteHora = Integer.parseInt(Hora[0]);
-							if (ConverteHora>0){
-								ConverteHora = ConverteHora-1;
+							if (ConverteHora>1){
+								ConverteHora = ConverteHora-2;
 							} else {
-								ConverteHora = 23;
+								ConverteHora = ConverteHora+22;
 							}
 							Hora[0] = String.format("%02d", ConverteHora);
 							Palavras[0] = Hora[0]+":"+Hora[1];
@@ -147,7 +124,6 @@ public class arquivoCSV {
 					}
 					
 					System.out.println("---------------------------");
-					// 4) 3 linhas
 					System.out.println("Linha 4.1: " + linha);
 					linha = leitor.readLine();
 					System.out.println("Linha 4.2: " + linha);
@@ -156,17 +132,16 @@ public class arquivoCSV {
 					linha = leitor.readLine();
 					
 					System.out.println("---------------------------");
-					// 5) 1 linha
 					Palavras = linha.split(",");
 					System.out.println("Linha 5.1: " + Palavras[0] + " | " + Palavras[1]);
 					linha = leitor.readLine();
 					
 					System.out.println("---------------------------");
-					// 6) X linhas
 					int cont6 = 1;
 					while (Palavras.length > 1){
 						Palavras = linha.split(",");
 						if (Palavras.length>1){
+							//Palavras[0] = convertePais(Palavras[0]);
 							System.out.println("Linha 6." + cont6 + ": " + Palavras[0] + " | " + Palavras[1]);
 							
 							Regi„o = null;
@@ -175,7 +150,7 @@ public class arquivoCSV {
 							if (!Palavras[1].equals(" ")){
 								Regi„o.valor = Integer.parseInt(Palavras[1]);
 							}
-							ListaRegi„o.add(Regi„o);
+							ListaRegiao.add(Regi„o);
 							
 							linha = leitor.readLine();
 							cont6++;
@@ -185,7 +160,6 @@ public class arquivoCSV {
 					if(linha != null){
 					
 						System.out.println("---------------------------");
-						// 7) 3 linhas
 						System.out.println("Linha 7.1: " + linha);
 						linha = leitor.readLine();
 						System.out.println("Linha 7.2: " + linha);
@@ -196,13 +170,11 @@ public class arquivoCSV {
 						if(linha != null){
 						
 							System.out.println("---------------------------");
-							// 8) 1 linha
 							Palavras = linha.split(",");
 							System.out.println("Linha 8.1: " + Palavras[0] + " | " + Palavras[1]);
 							linha = leitor.readLine();
 							
 							System.out.println("---------------------------");
-							// 9) X linhas
 							int cont9 = 1;
 							while (Palavras.length > 1){
 								Palavras = linha.split(",");
@@ -227,7 +199,6 @@ public class arquivoCSV {
 					if(linha != null){
 					
 						System.out.println("---------------------------");
-						// 10) 4 linhas
 						System.out.println("Linha 10.1: " + linha);
 						linha = leitor.readLine();
 						System.out.println("Linha 10.2: " + linha);
@@ -238,7 +209,6 @@ public class arquivoCSV {
 						linha = leitor.readLine();
 						
 						System.out.println("---------------------------");
-						// 11) X linhas
 						Palavras = linha.split(",");
 					
 					}
@@ -262,7 +232,6 @@ public class arquivoCSV {
 					}
 						
 					System.out.println("---------------------------");
-					// 12) 4 linhas
 					System.out.println("Linha 12.1: " + linha);
 					linha = leitor.readLine();
 					System.out.println("Linha 12.2: " + linha);
@@ -275,10 +244,7 @@ public class arquivoCSV {
 					System.out.println("---------------------------");
 						
 					if(linha != null){
-						
-						// 13) X linhas
 						Palavras = linha.split(",");
-						
 					}
 					
 					while (Palavras.length > 1){
@@ -297,7 +263,7 @@ public class arquivoCSV {
 									Ascens„o.valor = Integer.parseInt(Palavras[1]);
 									Ascens„o.valor = (Ascens„o.valor)/100;
 								}
-								ListaAscens„o.add(Ascens„o);
+								ListaAscensao.add(Ascens„o);
 								
 								linha = leitor.readLine();
 								cont13++;
@@ -307,7 +273,6 @@ public class arquivoCSV {
 					if(linha != null){
 						
 						System.out.println("---------------------------");
-						// 14) 3 linhas
 						System.out.println("Linha 14.1: " + linha);
 						linha = leitor.readLine();
 						System.out.println("Linha 14.2: " + linha);
@@ -323,5 +288,239 @@ public class arquivoCSV {
 			{
 				System.err.printf("Erro ao abrir o arquivo: %s\n", e.getMessage());
 			}
+		}
+		
+		public String convertePais(String portugues){
+			String ingles = "bean";
+			switch (portugues){
+				case "√?ustria":
+					ingles = "Austria";
+					break;
+				case "√?frica do Sul":
+					ingles = "South Africa";
+					break;
+				case "Alb√¢nia":
+					ingles = "Albania";
+					break;
+				case "Ar√°bia Saudita":
+					ingles = "Saudi Arabia";
+					break;
+				case "Alemanha":
+					ingles = "Germany";
+					break;
+				case "Arg√©lia":
+					ingles = "Algeria";
+					break;	
+				case "Argentina":
+					ingles = "Argentina";
+					break;
+				case "Austr√°lia":
+					ingles = "Australia";
+					break;
+				case "Azerbaij√£o":
+					ingles = "Azerbaijan";
+					break;
+				case "B√©lgica":
+					ingles = "Belgium";
+					break;
+				case "Bol√≠via":
+					ingles = "Bolivia";
+					break;
+				case "B√≥snia e Herzegovina":
+					ingles = "Bosnia and Herzegovina";
+					break;
+				case "Brasil":
+					ingles = "Brazil";
+					break;
+				case "Bulg√°ria":
+					ingles = "Bulgaria";
+					break;
+				case "Canad√°":
+					ingles = "Canada";
+					break;
+				case "Cingapura":
+					ingles = "Singapore";
+					break;
+				case "Chile":
+					ingles = "Chile";
+					break;
+				case "Col√¥mbia":
+					ingles = "Colombia";
+					break;
+				case "Costa do Marfim":
+					ingles = "Ivory Coast";
+					break;
+				case "Costa Rica":
+					ingles = "Costa Rica";
+					break;
+				case "Cro√°cia":
+					ingles = "Croatia";
+					break;
+				case "Dinamarca":
+					ingles = "Denmark";
+					break;
+				case "Egito":
+					ingles = "Egypt";
+					break;
+				case "El Salvador":
+					ingles = "El Salvador";
+					break;
+				case "Emirados √?rabes Unidos":
+					ingles = "United Arab Emirates";
+					break;
+				case "Equador":
+					ingles = "Ecuador";
+					break;
+				case "Espanha":
+					ingles = "Spain";
+					break;
+				case "Filipinas":
+					ingles = "Philippines";
+					break;
+				case "Finl√¢ndia":
+					ingles = "Finland";
+					break;
+				case "Fran√ßa":
+					ingles = "France";
+					break;
+				case "Eslov√°quia":
+					ingles = "Slovakia";
+					break;
+				case "Estados Unidos":
+					ingles = "United States";
+					break;
+				case "Gr√©cia":
+					ingles = "Greece";
+					break;
+				case "Guatemala":
+					ingles = "Guatemala";
+					break;
+				case "Holanda":
+					ingles = "Netherlands";
+					break;
+				case "Honduras":
+					ingles = "Honduras";
+					break;
+				case "Hungria":
+					ingles = "Hungary";
+					break;
+				case "√?ndia":
+					ingles = "India";
+					break;
+				case "Indon√©sia":
+					ingles = "Indonesia";
+					break;
+				case "It√°lia":
+					ingles = "Italy";
+					break;
+				case "Irlanda":
+					ingles = "Ireland";
+					break;
+				case "Ir√£":
+					ingles = "Iran";
+					break;
+				case "Iraque":
+					ingles = "Iraq";
+					break;
+				case "Israel":
+					ingles = "Israel";
+					break;
+				case "Jap√£o":
+					ingles = "Japan";
+					break;
+				case "Jord√¢nia":
+					ingles = "Jordan";
+					break;
+				case "L√≠bano":
+					ingles = "Lebanon";
+					break;
+				case "Litu√¢nia":
+					ingles = "Lithuania";
+					break;
+				case "M√©xico":
+					ingles = "Mexico";
+					break;
+				case "Mal√°sia":
+					ingles = "Malaysia";
+					break;
+				case "Marrocos":
+					ingles = "Morocco";
+					break;
+				case "Nig√©ria":
+					ingles = "Nigeria";
+					break;
+				case "Noruega":
+					ingles = "Norway";
+					break;
+				case "Nova Zel√¢ndia":
+					ingles = "New Zealand";
+					break;
+				case "Panam√°":
+					ingles = "Panama";
+					break;
+				case "Paquist√£o":
+					ingles = "Pakistan";
+					break;
+				case "Peru":
+					ingles = "Peru";
+					break;
+				case "Pol√¥nia":
+					ingles = "Poland";
+					break;
+				case "Porto Rico":
+					ingles = "Puerto Rico";
+					break;
+				case "Portugal":
+					ingles = "Portugal";
+					break;
+				case "Reino Unido":
+					ingles = "UK";
+					break;
+				case "Rep√∫blica Dominicana":
+					ingles = "Dominican Republic";
+					break;
+				case "Rep√∫blica Tcheca":
+					ingles = "Czech Republic";
+					break;
+				case "Rom√™nia":
+					ingles = "Romania";
+					break;
+				case "R√∫ssia":
+					ingles = "Russia";
+					break;
+				case "S√©rvia":
+					ingles = "Serbia";
+					break;
+				case "Su√©cia":
+					ingles = "Sweden";
+					break;
+				case "Su√≠√ßa":
+					ingles = "Switzerland";
+					break;
+				case "Tail√¢ndia":
+					ingles = "Thailand";
+					break;
+				case "Tun√≠sia":
+					ingles = "Tunisia";
+					break;
+				case "Turquia":
+					ingles = "Turkey";
+					break;
+				case "Uruguai":
+					ingles = "Uruguay";
+					break;
+				case "Ucr√¢nia":
+					ingles = "Ucrania";
+					break;
+				case "Venezuela":
+					ingles = "Venezuela";
+					break;
+				case "Vietn√£":
+					ingles = "Vietnam";
+					break;
+				default:
+					System.out.println("PaÌs n„o convertido: " + portugues);
+			}
+			return ingles;
 		}
 }

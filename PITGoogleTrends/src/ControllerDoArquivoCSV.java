@@ -1,8 +1,15 @@
 
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,33 +24,25 @@ public class ControllerDoArquivoCSV extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String nome = request.getParameter("nome"); // Parâmetro oriundo da chamada JQuery
-        String aniversario = request.getParameter("niver"); // Parâmetro oriundo da chamada   JQuery
-        Pessoa pessoa = new Pessoa();
-        pessoa.Nome = nome;
-        pessoa.Aniversario = aniversario;
-        System.out.println("uhuuuul");
-        //try {
-        //     pessoa.Inserir();
-       //}catch (ClassNotFoundException | SQLException e) {
-       //      e.printStackTrace();
-       //}
-        //String funcionou = "AH GAROTO!";
-        /*valores funcionou1 = new valores();
-        funcionou1.atributo = "SHOW";
-        funcionou1.valor = 90;
-        ArrayList<valores> funcionou = new ArrayList<valores>();
-        funcionou.add(funcionou1);
-        valores funcionou2 = new valores();
-        funcionou2.atributo = "SHOW2";
-        funcionou2.valor = 902;
-        funcionou.add(funcionou2);
-        */
-		arquivoCSV funcionou = new arquivoCSV();
-		funcionou.ler();
+        String termo = request.getParameter("termo");
         
+        arquivoCSV csv = new arquivoCSV();
+		termo = termo.replace(" ", "%20");
+        csv.download(termo);
+		csv.ler();
+		termo = termo.replace("%20", "_");
+		DateFormat dateFormat2 = new SimpleDateFormat("HHmmss_ddMMyyyy");
+		Date date2 = new Date();
+		System.out.println(dateFormat2.format(date2));
+		Path from = Paths.get("C:\\Users\\Jean\\Desktop\\PIT_GoogleTrends\\Download.csv");
+		Path to = Paths.get("C:\\Users\\Jean\\Desktop\\PIT_GoogleTrends\\" + termo + dateFormat2.format(date2) + ".csv");
+		try {
+			Files.move(from, to, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		String JSONok = "";
-		JSONok = new Gson().toJson(funcionou);
+		JSONok = new Gson().toJson(csv);
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(JSONok);
