@@ -1,5 +1,5 @@
 
 public class valores {
-	public String atributo;
+	public String atributo = "abóbora";
 	public double valor = 0;
 }

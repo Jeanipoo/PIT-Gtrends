@@ -17,11 +17,11 @@ public class teste {
 			}
 			System.out.println("==============");
 		}
-		if (file.ListaRegião.size()>0){
+		if (file.ListaRegiao.size()>0){
 			System.out.println("Região | Valor");
 			System.out.println("--------------");
-			for (int i = 0; i<file.ListaRegião.size(); i++){
-				System.out.println(file.ListaRegião.get(i).atributo + " | " + file.ListaRegião.get(i).valor);
+			for (int i = 0; i<file.ListaRegiao.size(); i++){
+				System.out.println(file.ListaRegiao.get(i).atributo + " | " + file.ListaRegiao.get(i).valor);
 			}
 			System.out.println("==============");
 		}
@@ -41,11 +41,11 @@ public class teste {
 			}
 			System.out.println("=============================");
 		}
-		if (file.ListaAscensão.size()>0){
+		if (file.ListaAscensao.size()>0){
 			System.out.println("Pesquisas em Ascensão | Valor");
 			System.out.println("-----------------------------");
-			for (int i = 0; i<file.ListaAscensão.size(); i++){
-				System.out.println(file.ListaAscensão.get(i).atributo + " | " + file.ListaAscensão.get(i).valor);
+			for (int i = 0; i<file.ListaAscensao.size(); i++){
+				System.out.println(file.ListaAscensao.get(i).atributo + " | " + file.ListaAscensao.get(i).valor);
 			}
 			System.out.println("===================");
 		}

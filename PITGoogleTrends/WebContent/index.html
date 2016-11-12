@@ -1,48 +1,272 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript"
-	src="https://www.gstatic.com/charts/loader.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<meta charset="ISO-8859-1">
+<title>PIT - Google</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<style type="text/css">body{color:white;background:#211123}input{color:black}div{font-size:110%}h3{font-size:110%}</style>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<link rel="stylesheet" type="text/css" href="testeWordCloud.css" />
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
+<script type="text/javascript" src="testeWordCloud.js"></script>
 <script type="text/javascript">
+/*
+<div id="curve_chart" style=" width: 90px; height: 50px"></div> - Grï¿½fico Original do Google Charts
+#0d8415 #440139 #382034 #5b014c #8e0277 '#723b69'
+<style type="text/css">body{color:white;background:navy;}</style> - Fundo CSS sobrescrevendo o Bootstrap
+*/
+
     $(document).ready(function(){
-    	var RespostaJson;
-    	$.get('ControllerDoArquivoCSV',{nome:"aham"},function(responseJson) {  
-		  	RespostaJson = responseJson
-	    });
-    	
-      	google.charts.load('current', {'packages':['corechart']});
-      	google.charts.setOnLoadCallback(drawChart);
+    	$("#btn_Ok").click(function(){
+    		var word_list = [];
+    		function wordCloud() {
+	    		for (m=0; m<RespostaJson.ListaRelacionadas.length; m++){
+	    	  		if (RespostaJson.ListaRelacionadas[m].valor!=0){
+	    	      		resposta1 = RespostaJson.ListaRelacionadas[m].atributo;
+	    	        	resposta2 = RespostaJson.ListaRelacionadas[m].valor;
+	    	        	word_list.push({text: resposta1, weight: resposta2});
+	    	        	}
+	      			}
+    		}
+    		var vtermo =  $('#termo').val();
+	    	var RespostaJson;
+	    	
+	    	$.get('ControllerDoArquivoCSV',{termo:vtermo},function(responseJson) {  
+			  	RespostaJson = responseJson
+		    });
+	    	
+            alert('Espere 20 segundos');
+	      	setTimeout(function(){ 
+	      		google.charts.load('current', {'packages':['treemap']});
+	      		google.charts.setOnLoadCallback(drawTreeMap);
+	      		setTimeout(function(){ 
+	      			google.charts.load('current', {'packages':['corechart']});
+		      		google.charts.setOnLoadCallback(drawChart);
+			      	google.charts.load('upcoming', {'packages':['geochart']});
+			        google.charts.setOnLoadCallback(drawRegionsMap);
+			        google.charts.load("current", {packages:["corechart"]});
+			        google.charts.setOnLoadCallback(drawCityChart);
+			        wordCloud();
+			        $(function() {
+			        	$("#my_favorite_latin_words").empty();
+			        	$("#my_favorite_latin_words").jQCloud('destroy');
+			        	$("#my_favorite_latin_words").jQCloud(word_list, {});
+			        });
+	      		}, 2000);  
+	        }, 8500);  
 
-      	function drawChart() { 
-    	  	var dataArray = [['Hora','Volume de pesquisas']];  
-    	    var resposta1;
-    	    var resposta2; 
-    	  	var m=0;
-    	    for (m=0; m<RespostaJson.ListaPorMinuto.length; m++){
-    	    	if (RespostaJson.ListaPorMinuto[m].valor!=0){
-    	        	resposta1 = RespostaJson.ListaPorMinuto[m].atributo;
-    	        	resposta2 = RespostaJson.ListaPorMinuto[m].valor;
-    	        	dataArray.push([resposta1,resposta2]);
-    	        	}
-      			}
-			var data = google.visualization.arrayToDataTable(dataArray);
+	      	function drawCityChart() { 
+	    		//var colorbar = ["white","blue","yellow","red","green"];
+	    		var cor1 = "yellow";
+	    		var cor2 = "#6d6b01";
+	    		var cor3 = "#6d6b01";
+				var x = 0;
+	      		var dataArray = [["Element", "Density", { role: "style" } ]];
+	      		for (m=0; m<RespostaJson.ListaCidade.length; m++){
+	    	  		if (RespostaJson.ListaCidade[m].valor!=0){
+	    	      		resposta1 = RespostaJson.ListaCidade[m].atributo;
+	    	        	resposta2 = RespostaJson.ListaCidade[m].valor;
+	    	        	dataArray.push([resposta1,resposta2,cor1]);
+	    	        	cor3=cor1;
+	    	        	cor1=cor2;
+	    	        	cor2=cor3;
+	    	        	//x = Math.floor((Math.random() * 5));
+	    	        	}
+	      			}
+	      		
+	      		var data = google.visualization.arrayToDataTable(dataArray);
+	      	  	var view = new google.visualization.DataView(data);
+	      	  	view.setColumns([0, 1,
+	      	  	                 { calc: "stringify",
+	      	                     sourceColumn: 1,
+	      	                     type: "string",
+	      	                     role: "annotation" }, 2]);
 
-        	var options = {
-          		title: RespostaJson.Pesquisa + ' | Todo o Mundo - Última hora',
-          		curveType: 'none',
-          		legend: { position: 'bottom' },
-          		vAxis: { maxValue:"100" , minValue:"0"}
-        	};
+	      	  	var options = {
+	      	    	bar: {groupWidth: "90%"},
+	      	    	legend: { position: "none" },
+	      	    	animation: { startup: true, duration: 2000 },
+	      	    	backgroundColor: '#422047',
+	      	    	hAxis: {
+	      	    	  titleTextStyle: {
+	      	    	    color: 'white'
+	      	    	  }, textStyle: {
+	      	    	    color: 'white'}
+	      	    	},
+			      	vAxis: {
+		      	    	  textStyle: { color: 'white'}}
+	      	  	};
+	      	  	var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+	      	  	chart.draw(view, options);
+	      	}
+	      	
+	        function drawRegionsMap() {
+	    	  	var dataArray = [['Country', 'Popularity']];  
+	          	var a;
+	    	  	var b; 
+	    	  	var m=0;
+	    	  	for (m=0; m<RespostaJson.ListaRegiao.length; m++){
+	    	  		if (RespostaJson.ListaRegiao[m].valor!=0){
+	    	      		resposta1 = RespostaJson.ListaRegiao[m].atributo;
+	    	        	resposta2 = RespostaJson.ListaRegiao[m].valor;
+	    	        	dataArray.push([resposta1,resposta2]);
+	    	        	}
+	      			}
+	        	var data = google.visualization.arrayToDataTable(dataArray);
 
-        	var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));        
-        	chart.draw(data, options);
-      	}	    
+	          	var options = {
+	        		colorAxis : {
+	        			minValue: 0,
+	        			colors: ['#723b69', '#fffa00'],
+	        		},
+	        		datalessRegionColor : '#5e3c63',
+	        		backgroundColor: '#422047'
+	          	};
+	          	var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+	          	chart.draw(data, options);
+	        }
+	        
+	      	function drawChart() { 
+	    	  	var dataArray = [['Hora','Volume de pesquisas']];  
+	    	  	var resposta1;
+	    	    var resposta2; 
+	    	  	var m=0;
+	    	    for (m=0; m<RespostaJson.ListaPorMinuto.length; m++){
+	    	    	if (RespostaJson.ListaPorMinuto[m].valor!=0){
+	    	        	resposta1 = RespostaJson.ListaPorMinuto[m].atributo;
+	    	        	resposta2 = RespostaJson.ListaPorMinuto[m].valor;
+	    	        	dataArray.push([resposta1,resposta2]);
+	    	        	}
+	      			}
+				var data = google.visualization.arrayToDataTable(dataArray);
+	
+	        	var options = {
+	        		animation: {
+	        			startup: true,
+	        			duration: 2000
+	        		},
+	          		title: RespostaJson.termo + ' | Todo o Mundo - Ultima hora',
+	          		titleTextStyle : { color: 'white' },
+	          		curveType: 'none',
+	          		chartArea: {left:'10%', top:'10%', width:'85%', height:'70%'},
+	          		vAxis: {
+	          			maxValue:"100",
+	          			minValue:"0",
+	          			textStyle: { color: 'white' }
+	          		},
+	          		hAxis: {
+	          			textStyle: { color: 'white' },
+	          		},
+	          		legend: {
+	          			textStyle: { color: 'white' },
+	          			position: 'bottom'
+	          		},
+	          		series: [
+	          		       {color: '#fffa00', visibleInLegend: false}, {}
+	          		     ],
+	          		series: {
+	          		       0:{color: '#fffa00', visibleInLegend: false}
+	          		     },
+	          		backgroundColor: '#422047'
+	        	};
+	
+	        	var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));        
+	        	chart.draw(data, options);
+	      	}
+	      	
+	        
+	        function drawTreeMap() {
+	    	  	var dataArray = [['Location', 'Parent', 'Tamanho', 'Cor'],
+	            	['Em ascensão',null,0,0]];
+	    	  	
+	    	  	var resposta1;
+	    	    var resposta2; 
+	    	  	var m=0;
+	    	    for (m=0; m<RespostaJson.ListaAscensao.length; m++){
+	    	    	if (RespostaJson.ListaAscensao[m].valor!=0){
+	    	        	resposta1 = RespostaJson.ListaAscensao[m].atributo;
+	    	        	resposta2 = RespostaJson.ListaAscensao[m].valor;
+	    	        	dataArray.push([resposta1,'Em ascensão',resposta2,resposta2]);
+	    	        }
+	      		}
+	        	var data = google.visualization.arrayToDataTable(dataArray);
+	        	
+	          	var tree = new google.visualization.TreeMap(document.getElementById('SHOWEIN'));
+	          	tree.draw(data, {
+	            	minColor: '#6d6b01',
+	            	midColor: '#ccc800',
+	            	maxColor: '#fffa00',
+	            	headerHeight: 0,
+	            	textStyle: { color: 'black',
+	            		  bold: true}
+	          	});
+	        }
+    	});
     });
-    </script>
+</script>
 </head>
 <body>
-	<div id="curve_chart" style="width: 900px; height: 500px"></div>
+	
+	<div class="container-fluid">
+	
+		<div class="row" style=" height: 30px"></div>
+
+		<div class="row">
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div class="col-md-1" style= "width: 28%">Geo | Países</div>
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div class="col-md-1" style= "width: 28%">Buscas Relacionadas</div>
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div class="col-md-1" style= "width: 28%">Trends</div>
+			<div class="col-md-1" style="width: 4%;"></div>
+		</div>
+		
+		<div class="row" style=" height: 10px"></div>
+		
+		<div class="row">
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div id="regions_div" class="col-md-1" style= "height: 245px; width: 28%; background:#422047" onmouseover="this.style.background='#5e2a66';" onmouseout="this.style.background='#422047';"></div>
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div class="col-md-1" style= "height: 245px; width: 28%; background:#422047" onmouseover="this.style.background='#5e2a66';" onmouseout="this.style.background='#422047';">
+				<div id="my_favorite_latin_words" style= "height: 100%; weight: 100%; background:#422047"><br><br><br><br><br><br><br><br></div> </div>
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div id="SHOWEIN" class="col-md-1" style= "height: 245px; width: 28%; background:#422047" onmouseover="this.style.background='#5e2a66';" onmouseout="this.style.background='#422047';"></div>
+			<div class="col-md-1" style="width: 4%;"></div>
+		</div>
+		
+		<div class="row" style=" height: 30px"></div>
+		
+		<div class="row">
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div class="col-md-1" style= "width: 28%">Cidades ( Ver zoom )</div>
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div class="col-md-1" style= "width: 60%">Busca por minuto</div>
+			<div class="col-md-1" style="width: 4%;"></div>
+		</div>
+		
+		<div class="row" style=" height: 10px"></div>
+		
+		<div class="row">
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div id="barchart_values" class="col-md-1" style= "height: 245px; width: 28%; background:#422047" onmouseover="this.style.background='#5e2a66';" onmouseout="this.style.background='#422047';"></div>
+			<div class="col-md-1" style="width: 4%;"></div>
+			<div id="curve_chart" class="col-md-8" style=" height: 245px; width: 60%;background:#422047" onmouseover="this.style.background='#5e2a66';" onmouseout="this.style.background='#422047';"></div>
+			<div class="col-md-1" style="width: 4%;"></div>
+		</div>
+		
+		<div class="row" style=" height: 53px;"></div>
+		<div class="row" style=" height: 30px; background:#a593a5"></div>
+		<div class="row" style=" background:#a593a5">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<input type="text" style=" width: 500px" id="termo" placeholder="Informe aqui o que deseja pesquisar">
+				<input type="button" id="btn_Ok" value="Iniciar >>">
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+		<div class="row" style=" height: 30px; background:#a593a5"></div>
+	</div>
 </body>
 </html>

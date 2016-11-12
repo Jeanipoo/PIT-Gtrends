@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript"
+	src="https://www.gstatic.com/charts/loader.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+    	var RespostaJson;
+
+    	$.get('PessoaController',{nome:"aham"},function(responseJson) {  
+		  	RespostaJson = responseJson
+    		/*var cont=0;
+	        var hora1 = "00:00";
+	        var valor1 = 150;
+	        var array = {hora:"66:66", valor:200};  
+	        var j=0;
+		  	var dataArray = [['Date','Count']];  
+		  	var m=0;
+		    var resposta12;
+		    var resposta22; 
+		  	for (m=0; m<10; m++){
+	            resposta12 = responseJson.ListaPorMinuto[m].atributo;
+	            resposta22 = responseJson.ListaPorMinuto[m].valor;
+	            alert("Data: " + resposta12 + " | " + resposta22);
+	            dataArray.push([resposta12,resposta22]);
+	            dataArray.push(["uhul"+m,(m*m)]);
+	            document.dataArray.push(["uhul"+m,(m*m)]);
+	    	}
+	    	return dataArray;*/
+	    });
+    	
+    	function Array(){
+	  	  	var dataArray = [['Date','Count']];  
+	  	    var m=0;
+	  	    for (m=0; m<10; m++){
+            	dataArray.push(["uhul"+m,(m*m)]);
+    		}
+	  	  	return dataArray;
+    	}
+    	
+      	google.charts.load('current', {'packages':['corechart']});
+      	google.charts.setOnLoadCallback(drawChart);
+
+      /*function getFullName() {
+    	  return document.getElementById('full_name').value;
+    	}
+
+    	function doStuff() {
+    	  var name = getFullName();
+
+    	  alert(name);
+    	}
+
+    	doStuff();*/
+      
+      
+      	function drawChart() {
+	  		//var dataArray = Array();   
+
+    	  	  	var dataArray = [['Date','Count']];  
+    		  	var cont=0;
+    	        var hora1 = "00:00";
+    	    	var resposta12;
+    	    	var resposta22; 
+    	        var valor1 = 150;
+    	        var array = {hora:"66:66", valor:200};  
+    	     	var resposta1;
+    	        var resposta2;
+    	        var j=0;
+    	  	    var m=0;
+    	    	for (m=0; m<10; m++){
+    	           	resposta12 = RespostaJson.ListaPorMinuto[m].atributo;
+    	            resposta22 = RespostaJson.ListaPorMinuto[m].valor;
+    	            alert("Data: " + resposta12 + " | " + resposta22);
+    	            dataArray.push([resposta12,resposta22]);
+    	            dataArray.push(["uhul"+m,(m*m)]);
+    	            }
+    	
+    	   // var dataArray = [['Date','Count'],['foi',80],['DIABOS!',100]]; 
+    	    /*for (cont=0;cont<11;cont++){
+    	        dataArray.push(["foi"+cont,(cont*cont)]);
+    	        	}*/
+			var data = google.visualization.arrayToDataTable(dataArray);
+    	/* 
+        var data = google.visualization.arrayToDataTable([
+          ['Hora', 'Volume de Pesquisa a cada minuto'],
+          [hora1,valor1],
+          [array.hora,array.valor],
+          ['17:43',  41],
+          ['17:56',  86],
+          ['17:57',  100],
+          ['17:58',  64],
+          ['18:38',  48]
+        ]);
+    	*/
+
+        	var options = {
+          		title: 'Impeachment | Todo o Mundo - Última hora',
+          		curveType: 'none',
+          		legend: { position: 'bottom' },
+          		vAxis: { maxValue:"100" }
+        	};
+
+        	var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));        
+        	chart.draw(data, options);
+      	}	    
+    	
+    	
+    });
+    </script>
+</head>
+<body>
+	<div id="curve_chart" style="width: 900px; height: 500px"></div>
+</body>
+</html>
