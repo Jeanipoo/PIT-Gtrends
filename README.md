@@ -7,6 +7,7 @@ Para funcionar em computadores diferentes:
 - Alterar o caminho do acesso ao arquivo CSV baixado, na classe arquivoCSV, para a pasta de download padrão
 - Alterar o caminho do acesso ao arquivo CSV já renomeado, na controler ControllerDoArquivoCSV, para a pasta onde quiser armazenar
 
+
 Problemas a resolver:
  - Fazer os gráficos ( no javascript ) carregarem ao primeiro clique
  - Resolver o problema na lógica da leitura, para quando tem pouco volume de pesquisa ou muito.
@@ -18,7 +19,8 @@ Problemas a resolver:
  - Pensar em como gravar em banco de dados
  - Pesquisa bibliográfica
  - Cartaz de apresentação
- 
+
+
  Resolvido!
  - Download de mais de uma palavra
- - RESOLVIDO - Ler arquivo CSV e converter para Base64, e inglês, para poder montar os gráficos de Geo do google charts
+ - Ler arquivo CSV e converter para Base64, e inglês, para poder montar os gráficos de Geo do google charts
